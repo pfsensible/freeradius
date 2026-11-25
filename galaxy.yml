@@ -10,12 +10,13 @@ readme: README.md
 # A list of the collection's content authors. Can be just the name or in the format 'Full Name <email> (url)
 # @nicks:irc/im.site#channel'
 authors:
-- your name <example@domain.com>
+- Orion Poplawski
+- Romain Tiennot
 
 
 ### OPTIONAL but strongly recommended
 # A short summary description of the collection
-description: your collection description
+description: Modules for managing FreeRADIUS on pfSense firewalls
 
 license:
 - GPL-3.0-or-later
@@ -47,11 +48,13 @@ issues: https://github.com/pfsensible/freeradius/issues
 # uses 'fnmatch' to match the files or directories. Some directories and files like 'galaxy.yml', '*.pyc', '*.retry',
 # and '.git' are always filtered. Mutually exclusive with 'manifest'
 build_ignore:
+  - .github
   - .gitignore
   - .travis.yml
   - '*.tar.gz'
   - examples
   - misc
+  - pyproject.toml
   - setup.cfg
   - tests
 

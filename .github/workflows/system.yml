@@ -10,9 +10,30 @@ permissions:
   contents: read
 
 jobs:
+  # The appliance job needs the scenarios of tests/system, which this collection does not have yet.
+  scenarios:
+    runs-on: ubuntu-24.04
+    outputs:
+      present: ${{ steps.look.outputs.present }}
+    steps:
+      - name: Checkout collection under test
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Look for system test scenarios
+        id: look
+        run: |
+          if [[ -f tests/system/run.py ]]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No system test scenarios yet: the appliance job is skipped."
+          fi
+
   appliance:
+    needs: scenarios
     # A downloadable, prepared appliance is needed; see tests/system/README.md.
-    if: vars.PFSENSE_VM_IMAGE_URL != ''
+    if: vars.PFSENSE_VM_IMAGE_URL != '' && needs.scenarios.outputs.present == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
