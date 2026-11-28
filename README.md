@@ -55,7 +55,7 @@ This package assumes that the FreeRADIUS pfSense package has been installed.
 ## Modules
 The following modules are currently available:
 
-* [pfsense_freeradius](plugins/modules/pfsense_MODULE.py) for configuring FreeRADIUS
+* [pfsense_freeradius_sync](plugins/modules/pfsense_freeradius_sync.py) for the XMLRPC sync settings of the FreeRADIUS package
 
 ## License
 
