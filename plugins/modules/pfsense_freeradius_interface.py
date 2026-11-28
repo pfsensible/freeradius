@@ -22,6 +22,11 @@ description:
   - Omitted options preserve the settings of an existing entry. A new entry gets the defaults of the web GUI.
   - As the web GUI does, a change regenerates the package's configuration and restarts FreeRADIUS.
 
+notes:
+  - When the XMLRPC sync of the package is in V(auto) mode (see M(pfsensible.freeradius.pfsense_freeradius_sync)), a change reaches
+    the High Availability peer with the next configuration sync, which saving the page in the web GUI starts, but the module does
+    not. On an HA pair, start a sync after the changes, for example with M(pfsensible.core.pfsense_rewrite_config).
+
 options:
   address:
     description:
