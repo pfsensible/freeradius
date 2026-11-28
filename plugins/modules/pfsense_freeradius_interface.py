@@ -17,7 +17,7 @@ version_added: "0.1.0"
 
 description:
   - Manage the entries of Services > FreeRADIUS > Interfaces, what the FreeRADIUS package listens on.
-  - An entry is found by its O(address) and O(port).
+  - An entry is found by its O(address) and O(port). The module fails when more than one entry has them, which the web GUI allows.
   - The freeradius3 package must be installed.
   - Omitted options preserve the settings of an existing entry. A new entry gets the defaults of the web GUI.
   - As the web GUI does, a change regenerates the package's configuration and restarts FreeRADIUS.
@@ -138,10 +138,12 @@ class PFSenseFreeRADIUSInterfaceModule(PFSenseModuleBase):
     #
     def _find_entry(self):
         """ the entry with the address and port of the task """
-        for elt in self.elements:
-            if elt.findtext("varinterfaceip") == self.params["address"] and elt.findtext("varinterfaceport") == str(self.params["port"]):
-                return elt
-        return None
+        found = [elt for elt in self.elements
+                 if elt.findtext("varinterfaceip") == self.params["address"] and elt.findtext("varinterfaceport") == str(self.params["port"])]
+        # The web GUI does not check that an address and port are unique
+        if len(found) > 1:
+            self.module.fail_json(msg="Found multiple entries for {0}.".format(self._get_obj_name()))
+        return found[0] if found else None
 
     def _validate_params(self):
         """ do the checks of the web GUI """

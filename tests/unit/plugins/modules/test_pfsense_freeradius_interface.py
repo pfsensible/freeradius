@@ -91,6 +91,20 @@ class TestPFSenseFreeRADIUSInterfaceModule(TestPFSenseModule):
             self.assertIn(msg, self.failed()["msg"])
         self.assertFalse(os.path.exists(self.backup_file))
 
+    @parameterized.expand([
+        ("update", dict(type="acct")),
+        ("delete", dict(state="absent")),
+    ])
+    def test_duplicate_entries(self, name, params):
+        # The web GUI accepts a second entry on the same address and port: the module must not pick one of them
+        self.write_config(PACKAGE + "<freeradiusinterfaces>{0}</freeradiusinterfaces>".format(
+            ENTRY.format("127.0.0.1", "1813", "auth") + ENTRY.format("127.0.0.1", "1813", "status")))
+        with set_module_args(dict(address="127.0.0.1", port=1813, **params)):
+            self.assertEqual(self.failed()["msg"], "Found multiple entries for '127.0.0.1:1813'.")
+        self.assertEqual([entry["varinterfacetype"] for entry in self.entries()], ["auth", "status"])
+        self.assertFalse(os.path.exists(self.backup_file))
+        self.phpshell.assert_not_called()
+
     def test_package_not_installed(self):
         self.write_config("")
         with set_module_args(dict(address="127.0.0.1", port=1813, type="acct")):
