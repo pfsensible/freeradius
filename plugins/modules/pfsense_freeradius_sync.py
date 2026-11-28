@@ -22,6 +22,11 @@ description:
   - As the web GUI does, a change runs the package's sync, which in V(manual) mode copies the settings to the hosts right away.
     It can take up to a few times O(timeout) per host, and its errors only go to the system log.
 
+notes:
+  - With O(mode=auto), the package's sync does nothing. The FreeRADIUS settings reach the High Availability peer with the next
+    configuration sync, which saving a page of the web GUI starts, but the module does not. On an HA pair, start a sync after
+    the changes, for example with M(pfsensible.core.pfsense_rewrite_config).
+
 options:
   mode:
     description:
