@@ -67,13 +67,16 @@ jobs:
           pip install ansible-core==${{ matrix.ansible-version }}.* dnspython parameterized pyyaml
           ansible-galaxy collection install community.internal_test_tools
 
+      # The unit tests use pfsensible.core's module_utils and test harness: its source tree, since the
+      # built collection does not ship tests
       - name: Run ansible tests
         run: |
           pwd
           dir=$(pwd)
           mkdir -p ~/.ansible/collections/ansible_collections/pfsensible
           cd ~/.ansible/collections/ansible_collections/pfsensible
-          cp -al $dir core
-          cd core
+          git clone --depth 1 https://github.com/pfsensible/core.git core
+          cp -al $dir freeradius
+          cd freeradius
           ansible-test sanity --requirements --python ${{ matrix.python-version }}
           ansible-test units --requirements --python ${{ matrix.python-version }} -v
